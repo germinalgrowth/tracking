@@ -1,34 +1,33 @@
-<script type=”text/javascript”>
+<script type="text/javascript">
+ (function() {
+ var utmInheritingDomain = "germinal.io", // REPLACE THIS DOMAIN
+ utmRegExp = /(\&|\?)utm_[A-Za-z]+=[A-Za-z0-9]+/gi,
+ links = document.getElementsByTagName("a"),
+ utms = [
+ "utm_medium={{URL - utm_medium}}", // IN GTM, CREATE A URL VARIABLE utm_medium
+ "utm_source={{URL - utm_source}}", // IN GTM, CREATE A URL VARIABLE utm_source
+ "utm_campaign={{URL - utm_campaign}}" // IN GTM, CREATE A URL VARIABLE utm_campaign
+ ];
 
-(function() {
-var utmInheritingDomain = “appstore.com”, // REPLACE THIS DOMAIN
-utmRegExp = /(\&|\?)utm_[A-Za-z]+=[A-Za-z0–9]+/gi,
-links = document.getElementsByTagName(“a”),
-utms = [
-“utm_medium={{URL — utm_medium}}”, // IN GTM, CREATE A URL VARIABLE utm_medium
-“utm_source={{URL — utm_source}}”, // IN GTM, CREATE A URL VARIABLE utm_source
-“utm_campaign={{URL — utm_campaign}}” // IN GTM, CREATE A URL VARIABLE utm_campaign
-];
+ for (var index = 0; index < links.length; index += 1) {
+ var tempLink = links[index].href,
+ tempParts;
 
-for (var index = 0; index < links.length; index += 1) {
-var tempLink = links[index].href,
-tempParts;
-if (tempLink.indexOf(utmInheritingDomain) > 0) { // The script is looking for all links with the utmInheritingDomain
-tempLink = tempLink.replace(utmRegExp, “”);
-tempParts = tempLink.split(“#”);
-if (tempParts[0].indexOf(“?”) < 0 ) {
-tempParts[0] += “?” + utms.join(“&”); // The script adds UTM parameters to all links with the domain you’ve defined
-} else {
+ if (tempLink.indexOf(utmInheritingDomain) > 0) { // The script is looking for all links with the utmInheritingDomain
+ tempLink = tempLink.replace(utmRegExp, "");
 
-tempParts[0] += “&” + utms.join(“&”);
-}
+ tempParts = tempLink.split("#");
 
-tempLink = tempParts.join(“#”);
-}
+ if (tempParts[0].indexOf("?") < 0 ) {
+ tempParts[0] += "?" + utms.join("&"); // The script adds UTM parameters to all links with the domain you've defined
+ } else {
+ tempParts[0] += "&" + utms.join("&");
+ }
 
-links[index].href = tempLink;
-}
+ tempLink = tempParts.join("#");
+ }
 
-}());
-
+ links[index].href = tempLink;
+ }
+ }());
 </script>

@@ -1,0 +1,16 @@
+
+function(){
+try {
+    var ga = {{Germinal - GA Cookie - GDPR Compliance}};
+    var ga_create= (Number(ga.split(".").pop()))*1000;
+    var sec_expire = 60*60*24*30*13*1000;
+    var t = new Date().getTime();
+    var t0 = new Date(ga_create).getTime();
+    var t1 = t0 + sec_expire;
+    var t_diff = Math.round((t1-t)/1000);
+    return t_diff;
+} catch(e){
+  	return sec_expire/1000;
+	console.log(e);
+}
+}

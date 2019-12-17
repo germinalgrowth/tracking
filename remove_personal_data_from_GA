@@ -1,0 +1,35 @@
+function() {
+return function(model) {
+// Add the PII patterns into this array as objects
+var piiRegex = [{
+  name: 'EMAIL',
+  regex: /[^\/]{4}@[^\/]{4}/g
+},{
+  name: 'TEL',
+  regex: /((tel=)|(telephone=)|(phone=)|(mobile=)|(mob=))[\d\+\s][^&\/\?]+/gi
+},{
+  name: 'NAME',
+  regex: /((prenom=)|(nom=)|(firstname=)|(lastname=)|(surname=))[^&\/\?]+/gi
+}];
+var globalSendTaskName = '_' + model.get('trackingId') + '_sendHitTask';
+// Fetch reference to the original sendHitTask
+var originalSendTask = window[globalSendTaskName] = window[globalSendTaskName] || model.get('sendHitTask');
+var i, hitPayload, parts, val;
+// Overwrite sendHitTask with PII purger
+model.set('sendHitTask', function(sendModel) {
+  hitPayload = sendModel.get('hitPayload').split('&');
+  for (i = 0; i < hitPayload.length; i++) {
+	parts = hitPayload[i].split('=');
+	// Double-decode, to account for web server encode + analytics.js encode
+	val = decodeURIComponent(decodeURIComponent(parts[1]));
+	piiRegex.forEach(function(pii) {
+	  val = val.replace(pii.regex, '[REDACTED ' + pii.name + ']');
+	});
+	parts[1] = encodeURIComponent(val);
+	hitPayload[i] = parts.join('=');
+  }
+  sendModel.set('hitPayload', hitPayload.join('&'), true);
+  originalSendTask(sendModel);
+});
+};
+}
